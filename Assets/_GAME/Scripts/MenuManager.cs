@@ -19,7 +19,7 @@ public class MenuManager : MonoBehaviour
         MainMenuPanel.SetActive(false);
         GUIPanel.SetActive(true);
         Debug.Log("Game Started");
-        GameStarted.Invoke();
+        GameStarted?.Invoke();
     }
 
     public void ToggleOptions()
