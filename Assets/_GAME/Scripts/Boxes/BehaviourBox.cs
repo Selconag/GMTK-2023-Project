@@ -13,10 +13,13 @@ public class BehaviourBox : Box, IPlayParticle
 
     #region movingPlatform
     public Transform moveTarget;
+    public Transform moveBase;
     public Vector3 moveStartPosition;
     public void MovePlatform(Vector3 targetPosition)
     {
+        
         moveStartPosition = transform.position;
+
         transform.position = Vector3.Lerp(moveStartPosition, moveTarget.position, 1);
     }
     #endregion
@@ -196,14 +199,14 @@ public class BehaviourBox : Box, IPlayParticle
     public void IncreaseJumpSpeed(float factor)
     {
         // Get the current velocity of the player
-        Vector3 jumpForce = Player.Instance.m_Speed; 
-        float fjumpForce = Player.Instance.m_ActiveJumpSpeed;
+         
+        float jumpForce = Player.Instance.m_ActiveJumpSpeed;
 
         // Multiply the y component of the velocity by the factor
         jumpForce *= factor;
 
         // Update the player's velocity
-        Player.Instance.m_ActiveJumpSpeed = fjumpForce;
+        Player.Instance.m_ActiveJumpSpeed = jumpForce;
         PlayParticleEffect();
     }
 
@@ -247,10 +250,11 @@ public class BehaviourBox : Box, IPlayParticle
         
         switch (bbt)
         {
-            /*
+            
             case BehaviourBoxTypes.movingPlatform:
-                MovePlatform(moveTarget.position);
+                MovePlatform(moveBase.position);
                 break;
+            /*
             case BehaviourBoxTypes.sizeBox:
                 EnlargePlayer(sizeFactor);
                 break;
