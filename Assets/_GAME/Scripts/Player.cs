@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     [SerializeField] bool m_InverseDirection = true;
     [SerializeField] AnimationCurve TurningCurve;
     bool m_CanRun = true;
-    bool m_Jumped;
+    public bool CanJump, CanPull, CanSmash;
     float ySpeed;
 
     /// <summary>
@@ -136,7 +136,5 @@ public class Player : MonoBehaviour
         if (!m_Controller.isGrounded) return;
         Animator.SetBool("IsOnGround", true);
         SetRunning(true);
-        //Debug.Log("NonJump");
-        m_Jumped = false;
     }
 }
