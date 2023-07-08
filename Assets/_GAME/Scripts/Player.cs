@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     [Header("References")]
     public bool m_References;
     [SerializeField] Transform m_ObjectSlot;
+    [SerializeField] Transform m_Scanner;
     public CharacterController m_Controller;
     [SerializeField] Animator m_Animator;
     void Start()
@@ -68,7 +69,25 @@ public class Player : MonoBehaviour
 
     public void ObjectInteraction()
     {
-
+        RaycastHit hit;
+        //Search right
+        if (Physics.Raycast(m_Scanner.transform.position, transform.TransformDirection(Vector3.right), out hit, Mathf.Infinity))
+        {
+            if (hit.transform.tag == "Player")
+            {
+                
+            }
+            else return;
+        }
+        //Search left
+        if (Physics.Raycast(m_Scanner.transform.position, transform.TransformDirection(Vector3.left), out hit, Mathf.Infinity))
+        {
+            if (hit.transform.tag == "Player")
+            {
+                
+            }
+            else return;
+        }
     }
 
 
