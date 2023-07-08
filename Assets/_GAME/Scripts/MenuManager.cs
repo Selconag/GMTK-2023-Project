@@ -9,8 +9,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] bool m_OptionsOpen;
 
     [Header("References")]
-    [SerializeField] GameObject m_MainMenuPanel, m_OptionsMenuPanel, m_PauseMenuPanel;
     [SerializeField] GameObject m_GUIPanel;
+    [SerializeField] GameObject m_MainMenuPanel, m_OptionsMenuPanel, m_PauseMenuPanel;
 
 
     public static Action GameStarted;
