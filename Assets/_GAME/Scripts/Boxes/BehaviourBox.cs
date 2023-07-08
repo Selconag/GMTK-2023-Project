@@ -2,10 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
-    
- */
-
 
 public class BehaviourBox : Box, IPlayParticle
 {
@@ -23,7 +19,6 @@ public class BehaviourBox : Box, IPlayParticle
         transform.position = Vector3.Lerp(moveStartPosition, moveTarget.position, 1);
     }
     #endregion
-
     #region sizeBox
         public int sizeFactor = 2;
         public void EnlargePlayer(int sizeFactor)
@@ -32,7 +27,6 @@ public class BehaviourBox : Box, IPlayParticle
             PlayParticleEffect();
         }
     #endregion
-
     #region gravityBox
     public bool isUpsideDown = false;
 
@@ -53,7 +47,6 @@ public class BehaviourBox : Box, IPlayParticle
         Player.Instance.transform.localScale = playerScale;
     }
     #endregion
-
     #region speedBox
     private bool isBoosted = false;
     private float baseSpeed;
@@ -84,7 +77,6 @@ public class BehaviourBox : Box, IPlayParticle
     }
 
     #endregion
-
     #region teleportBox
     public Transform teleportTarget;
     private bool isTeleporting = false;
@@ -113,7 +105,6 @@ public class BehaviourBox : Box, IPlayParticle
         }
     }
     #endregion
-
     #region enemySpawn
     public int spawnInterval = 10; // The interval in seconds between creature spawns
     public bool isBroken = false; // Indicates if the box is broken
@@ -192,7 +183,6 @@ public class BehaviourBox : Box, IPlayParticle
         PlayParticleEffect();
     }
     #endregion
-
     #region BounceBox
     public bool jumpIncreased = false;
     public float jumpFactor = 2.0f;
@@ -212,6 +202,77 @@ public class BehaviourBox : Box, IPlayParticle
 
 
     #endregion
+
+    #region physicsBox
+    public List<Transform> platforms = new List<Transform>();
+    public float fallDelay = 1f;
+    public float riseDelay = 10f;
+    public float fallSpeed = 2f;
+    public float riseSpeed = 1f;
+
+    private Vector3[] originalPositions;
+
+    public void ActivatePlatforms()
+    {
+        StartCoroutine(FallAndRisePlatforms());
+    }
+
+    private IEnumerator FallAndRisePlatforms()
+    {
+
+        // Store the original positions of the platforms
+        originalPositions = new Vector3[platforms.Count];
+        for (int i = 0; i < platforms.Count; i++)
+        {
+            originalPositions[i] = platforms[i].position;
+        }
+
+        // Wait for 1-2 seconds
+        float waitTime = Random.Range(1f, 2f);
+        yield return new WaitForSeconds(waitTime);
+
+        // Make the platforms fall down
+        for (int i = 0; i < platforms.Count; i++)
+        {
+            yield return new WaitForSeconds(fallDelay);
+            StartCoroutine(MovePlatform(platforms[i], originalPositions[i], fallSpeed, true));
+        }
+
+        // Wait for 10 seconds
+        yield return new WaitForSeconds(riseDelay);
+
+        // Make the platforms rise back up
+        for (int i = 0; i < platforms.Count; i++)
+        {
+            StartCoroutine(MovePlatform(platforms[i], originalPositions[i], riseSpeed, false));
+        }
+    }
+
+    private IEnumerator MovePlatform(Transform platform, Vector3 targetPosition, float speed, bool isFalling)
+    {
+        Vector3 startPosition = platform.position;
+        float t = 0f;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime * speed;
+            platform.position = Vector3.Lerp(startPosition, targetPosition, t);
+            yield return null;
+        }
+
+        // If falling, disable any physics interactions
+        if (isFalling)
+        {
+            Rigidbody platformRigidbody = platform.GetComponent<Rigidbody>();
+            if (platformRigidbody != null)
+            {
+                platformRigidbody.isKinematic = false;
+            }
+        }
+    }
+    #endregion
+
+
 
 
     public BehaviourBoxTypes bbt;
@@ -242,12 +303,13 @@ public class BehaviourBox : Box, IPlayParticle
                     IncreaseJumpSpeed(jumpFactor);
                 }
                 break;
+            case BehaviourBoxTypes.physicsBox:
+                ActivatePlatforms();
+                break;
         }
-
     }
     private void OnTriggerExit(Collider other)
     {
-        
         switch (bbt)
         {
             
