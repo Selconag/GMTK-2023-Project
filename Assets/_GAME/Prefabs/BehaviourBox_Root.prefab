@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5280035049463470040}
   - component: {fileID: 6675431967372258388}
   - component: {fileID: 325185372335430610}
+  - component: {fileID: 9195027607934605290}
   m_Layer: 0
   m_Name: BehaviourBox_Root
   m_TagString: Untagged
@@ -33,7 +34,7 @@ Transform:
   m_Children:
   - {fileID: 1407839777836110450}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5280035049463470040
 MonoBehaviour:
@@ -50,6 +51,23 @@ MonoBehaviour:
   m_IsBreakable: 1
   m_IsMoveable: 1
   m_IsPhysicsEnabled: 1
+  m_ParticleSystem: {fileID: 0}
+  moveTarget: {fileID: 0}
+  moveStartPosition: {x: 0, y: 0, z: 0}
+  sizeFactor: 2
+  isUpsideDown: 0
+  speedTimeLength: 10
+  speedFactor: 2
+  teleportTarget: {fileID: 0}
+  teleportTimeLength: 1.5
+  spawnInterval: 10
+  isBroken: 0
+  boxColor: {r: 0, g: 0, b: 0, a: 0}
+  blueEnemies: []
+  redEnemies: []
+  jumpIncreased: 0
+  jumpFactor: 2
+  bbt: 0
 --- !u!65 &6675431967372258388
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -58,9 +76,17 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1107761337433266442}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &325185372335430610
@@ -70,15 +96,47 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1107761337433266442}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 1000
   m_Drag: 500
   m_AngularDrag: 1
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &9195027607934605290
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107761337433266442}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.2974892, z: 1}
+  m_Center: {x: 0, y: 0.14874461, z: 0}
 --- !u!1 &1473003969637174613
 GameObject:
   m_ObjectHideFlags: 0

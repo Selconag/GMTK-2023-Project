@@ -25,7 +25,7 @@ public class Player : MonoBehaviour
     [Header("References")]
     public bool m_References;
     [SerializeField] Transform m_Scanner;
-    [SerializeField] Animator m_Animator;
+    [SerializeField] public Animator Animator;
 
     /// <summary>
     /// transform of the weapon slot
@@ -91,14 +91,14 @@ public class Player : MonoBehaviour
         if (m_Controller.isGrounded && Input.GetButtonDown("Jump"))
         {
             ySpeed = m_ActiveJumpSpeed;
-            m_Animator.SetBool("IsOnGround", false);
+            Animator.SetBool("IsOnGround", false);
             SetRunning(false);
             Debug.Log("Jump");
         }
         m_ActiveVelocity.y = ySpeed;
         if (m_CanRun)
             m_Controller.Move(m_ActiveVelocity * Time.deltaTime);
-        m_Animator.SetFloat("HorizontalSpeed", Mathf.Abs(m_ActiveVelocity.x));
+        Animator.SetFloat("HorizontalSpeed", Mathf.Abs(m_ActiveVelocity.x));
     }
 
     public void ObjectInteraction()
@@ -128,13 +128,13 @@ public class Player : MonoBehaviour
     public void SetRunning(bool newVal)
     {
         m_CanRun = newVal;
-        m_Animator.SetBool("CanRun", newVal);
+        Animator.SetBool("CanRun", newVal);
     }
 
     private void CheckForGround()
     {
         if (!m_Controller.isGrounded) return;
-        m_Animator.SetBool("IsOnGround", true);
+        Animator.SetBool("IsOnGround", true);
         SetRunning(true);
         //Debug.Log("NonJump");
         m_Jumped = false;
