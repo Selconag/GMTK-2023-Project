@@ -22,12 +22,12 @@ public class BehaviourBox : Box
     #endregion
 
     #region sizeBox
+        public int sizeFactor = 2;
         public void EnlargePlayer(int sizeFactor)
         {
             Player.instance.transform.localScale *= sizeFactor;
         }
     #endregion
-
 
     #region gravityBox
     public bool isUpsideDown = false;
@@ -55,6 +55,8 @@ public class BehaviourBox : Box
     private float baseSpeed;
     private float boostedSpeed;
     private float boostTimeRemaining;
+    public float speedTimeLength = 10.0f;
+    public float speedFactor = 2.0f;
 
     public void BoostSpeed(float timeLength, float speedCofactor)
     {
@@ -82,14 +84,14 @@ public class BehaviourBox : Box
     #region teleportBox
     public Transform teleportTarget;
     private bool isTeleporting = false;
-    private Transform targetArea;
-
+    private Vector3 teleportTargetArea;
+    public float teleportTimeLength = 1.5f;
     public void Teleport(float timeLength, Transform target)
     {
         if (!isTeleporting)
         {
             isTeleporting = true;
-            targetArea = target;
+            teleportTargetArea = target.position;
 
             StartCoroutine(TeleportAfterTime(timeLength));
         }
@@ -101,7 +103,7 @@ public class BehaviourBox : Box
 
         if (isTeleporting)
         {
-            transform.position = targetArea.position;
+            transform.position = teleportTargetArea;
             isTeleporting = false;
         }
     }
@@ -191,7 +193,7 @@ public class BehaviourBox : Box
     public void IncreaseJumpSpeed(float factor)
     {
         // Get the current velocity of the player
-        Vector3 jumpForce = Player.instance.m_Speed;
+        Vector3 jumpForce = Player.instance.m_Speed; 
 
         // Multiply the y component of the velocity by the factor
         jumpForce *= factor;
@@ -200,13 +202,40 @@ public class BehaviourBox : Box
         Player.instance.m_Speed = jumpForce;
     }
 
+
+    #endregion
+
+
+    public BehaviourBoxTypes bbt;
     private void OnTriggerEnter(Collider other)
     {
-        jumpIncreased = true;
-        if (other.CompareTag("Player"))
+        switch (bbt)
         {
-            IncreaseJumpSpeed(jumpFactor);
+            case BehaviourBoxTypes.movingPlatform:
+                MovePlatform(moveTarget.position);
+                break;
+            case BehaviourBoxTypes.sizeBox:
+                EnlargePlayer(sizeFactor);
+                break;
+            case BehaviourBoxTypes.gravityBox:
+                ReverseGravity();
+                break;
+            case BehaviourBoxTypes.speedBox:
+                BoostSpeed(speedTimeLength, speedFactor);
+                break;
+            case BehaviourBoxTypes.teleportBox:
+                Teleport(teleportTimeLength,teleportTarget);
+                break;
+
+            case BehaviourBoxTypes.bounceBox:
+                jumpIncreased = true;
+                if (other.CompareTag("Player"))
+                {
+                    IncreaseJumpSpeed(jumpFactor);
+                }
+                break;
         }
+        
     }
     private void OnTriggerExit(Collider other)
     {
@@ -216,12 +245,5 @@ public class BehaviourBox : Box
             jumpIncreased = false;
         }
     }
-    #endregion
 
-    //When Switch switches, apply effect here
-    public override void ApplyBoxEffect()
-    {
-
-    }
-    
 }
