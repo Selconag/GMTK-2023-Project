@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b861e7f7deb70c44996e88c8e640f56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsBreakable: 0
+  m_IsBreakable: 1
   m_IsMoveable: 0
   m_IsPhysicsEnabled: 0
 --- !u!65 &7644835952740085160
