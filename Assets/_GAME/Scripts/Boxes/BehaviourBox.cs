@@ -205,12 +205,17 @@ public class BehaviourBox : Box, IPlayParticle
 
     #region physicsBox
     public List<Transform> platforms = new List<Transform>();
+
     public float fallDelay = 1f;
     public float riseDelay = 10f;
     public float fallSpeed = 2f;
     public float riseSpeed = 1f;
 
+    public Color startColor = Color.green;
+    public Color endColor = Color.red;
+
     private Vector3[] originalPositions;
+    private Renderer[] platformRenderers;
 
     public void ActivatePlatforms()
     {
@@ -219,13 +224,22 @@ public class BehaviourBox : Box, IPlayParticle
 
     private IEnumerator FallAndRisePlatforms()
     {
-
         // Store the original positions of the platforms
         originalPositions = new Vector3[platforms.Count];
         for (int i = 0; i < platforms.Count; i++)
         {
             originalPositions[i] = platforms[i].position;
         }
+
+        // Get the renderers of the platforms
+        platformRenderers = new Renderer[platforms.Count];
+        for (int i = 0; i < platforms.Count; i++)
+        {
+            platformRenderers[i] = platforms[i].GetComponent<Renderer>();
+        }
+
+        // Change the color of the platforms to startColor
+        SetPlatformColors(startColor);
 
         // Wait for 1-2 seconds
         float waitTime = Random.Range(1f, 2f);
@@ -246,6 +260,9 @@ public class BehaviourBox : Box, IPlayParticle
         {
             StartCoroutine(MovePlatform(platforms[i], originalPositions[i], riseSpeed, false));
         }
+
+        // Change the color of the platforms to endColor
+        SetPlatformColors(endColor);
     }
 
     private IEnumerator MovePlatform(Transform platform, Vector3 targetPosition, float speed, bool isFalling)
@@ -268,6 +285,14 @@ public class BehaviourBox : Box, IPlayParticle
             {
                 platformRigidbody.isKinematic = false;
             }
+        }
+    }
+
+    private void SetPlatformColors(Color color)
+    {
+        for (int i = 0; i < platformRenderers.Length; i++)
+        {
+            platformRenderers[i].material.color = color;
         }
     }
     #endregion
