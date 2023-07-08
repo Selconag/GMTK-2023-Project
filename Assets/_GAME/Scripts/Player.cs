@@ -31,6 +31,13 @@ public class Player : MonoBehaviour
     {
         CheckForGround();
 
+        GeneralMove();
+
+        if (Input.GetKey(KeyCode.E)) ObjectInteraction();
+    }
+
+    public void GeneralMove()
+    {
         m_ActiveVelocity = new Vector2(-Input.GetAxis("Horizontal") * m_ActiveHorizontalSpeed, 0);
 
         m_ActiveRotation = Input.GetAxis("Horizontal") * 90;
@@ -41,9 +48,9 @@ public class Player : MonoBehaviour
 
         Mathf.Clamp(m_ActiveRotation, -90, 90);
         if (m_InverseDirection) m_ActiveRotation *= -1;
-        transform.rotation = Quaternion.Euler(0,m_ActiveRotation,0);
+        transform.rotation = Quaternion.Euler(0, m_ActiveRotation, 0);
 
-        if(!m_Controller.isGrounded)
+        if (!m_Controller.isGrounded)
             ySpeed += Physics.gravity.y * Time.deltaTime;
 
         if (m_Controller.isGrounded && Input.GetButtonDown("Jump"))
@@ -54,10 +61,16 @@ public class Player : MonoBehaviour
             Debug.Log("Jump");
         }
         m_ActiveVelocity.y = ySpeed;
-        if(m_CanRun)
+        if (m_CanRun)
             m_Controller.Move(m_ActiveVelocity * Time.deltaTime);
         m_Animator.SetFloat("HorizontalSpeed", Mathf.Abs(m_ActiveVelocity.x));
     }
+
+    public void ObjectInteraction()
+    {
+
+    }
+
 
     public void SetRunning(bool newVal)
     {
@@ -70,7 +83,7 @@ public class Player : MonoBehaviour
         if (!m_Controller.isGrounded) return;
         m_Animator.SetBool("IsOnGround", true);
         SetRunning(true);
-        Debug.Log("NonJump");
+        //Debug.Log("NonJump");
         m_Jumped = false;
     }
 }

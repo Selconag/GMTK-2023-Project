@@ -1639,7 +1639,7 @@ GameObject:
   - component: {fileID: 4667831703901692959}
   m_Layer: 0
   m_Name: YBot_Root
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1680,6 +1680,14 @@ MonoBehaviour:
   m_BaseJumpSpeed: 10
   m_ActiveJumpSpeed: 0
   m_ActiveVelocity: {x: 0, y: 0}
+  m_ActiveRotation: -90
+  m_InverseDirection: 1
+  TurningCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   m_References: 0
   m_ObjectSlot: {fileID: 3461917958341201991}
   m_Controller: {fileID: 4667831703901692959}
