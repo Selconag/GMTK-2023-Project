@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     [SerializeField] bool m_InverseDirection = true;
     [SerializeField] AnimationCurve TurningCurve;
     bool m_CanRun = true;
-
+    bool m_Jumped;
     float ySpeed;
 
     [Header("References")]
@@ -29,14 +29,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (m_Controller.isGrounded)
-        {
-            m_Animator.ResetTrigger("Jump");
-            m_Animator.SetBool("IsOnGround", true);
-            SetRunning(true);
-        }
+        CheckForGround();
 
-        Vector2 move = new Vector2(-Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        m_ActiveVelocity = new Vector2(-Input.GetAxis("Horizontal") * m_ActiveHorizontalSpeed, 0);
 
         m_ActiveRotation = Input.GetAxis("Horizontal") * 90;
         //m_ActiveRotation = TurningCurve.Evaluate(Mathf.Abs(Input.GetAxis("Horizontal"))) * 90;
@@ -51,15 +46,13 @@ public class Player : MonoBehaviour
         if(!m_Controller.isGrounded)
             ySpeed += Physics.gravity.y * Time.deltaTime;
 
-        if (Input.GetButtonDown("Jump") && m_Controller.isGrounded)
+        if (m_Controller.isGrounded && Input.GetButtonDown("Jump"))
         {
             ySpeed = m_ActiveJumpSpeed;
-            m_Animator.SetTrigger("Jump");
             m_Animator.SetBool("IsOnGround", false);
             SetRunning(false);
+            Debug.Log("Jump");
         }
-
-        m_ActiveVelocity = move;
         m_ActiveVelocity.y = ySpeed;
         if(m_CanRun)
             m_Controller.Move(m_ActiveVelocity * Time.deltaTime);
@@ -70,5 +63,14 @@ public class Player : MonoBehaviour
     {
         m_CanRun = newVal;
         m_Animator.SetBool("CanRun", newVal);
+    }
+
+    private void CheckForGround()
+    {
+        if (!m_Controller.isGrounded) return;
+        m_Animator.SetBool("IsOnGround", true);
+        SetRunning(true);
+        Debug.Log("NonJump");
+        m_Jumped = false;
     }
 }
