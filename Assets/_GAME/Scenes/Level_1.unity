@@ -1005,7 +1005,7 @@ GameObject:
   - component: {fileID: 1498099014}
   - component: {fileID: 1498099013}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1095,7 +1095,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &154489769055561103
 GameObject:
@@ -1446,7 +1446,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2129193032586155788, guid: 549c14f46eb320f4a99125dc6f9c88c9, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2129193032586155788, guid: 549c14f46eb320f4a99125dc6f9c88c9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1795,7 +1795,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7640180553433344785, guid: 165b2f05fff81ba4c954ffa997a11ac1, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7640180553433344785, guid: 165b2f05fff81ba4c954ffa997a11ac1, type: 3}
       propertyPath: m_LocalScale.x
@@ -1811,11 +1811,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7640180553433344785, guid: 165b2f05fff81ba4c954ffa997a11ac1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.879
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7640180553433344785, guid: 165b2f05fff81ba4c954ffa997a11ac1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.996
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7640180553433344785, guid: 165b2f05fff81ba4c954ffa997a11ac1, type: 3}
       propertyPath: m_LocalPosition.z
