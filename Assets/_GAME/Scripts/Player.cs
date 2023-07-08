@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField] bool m_WeaponEnabled;
     [Header("References")]
     public bool m_References;
+    [SerializeField] Transform m_ObjectSlot;
 
     void Start()
     {
