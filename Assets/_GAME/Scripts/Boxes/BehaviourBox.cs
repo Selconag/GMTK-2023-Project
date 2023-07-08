@@ -196,14 +196,14 @@ public class BehaviourBox : Box, IPlayParticle
     public void IncreaseJumpSpeed(float factor)
     {
         // Get the current velocity of the player
-        Vector3 jumpForce = Player.instance.m_Speed; 
-        float jumpForce = Player.Instance.m_ActiveJumpSpeed;
+        Vector3 jumpForce = Player.Instance.m_Speed; 
+        float fjumpForce = Player.Instance.m_ActiveJumpSpeed;
 
         // Multiply the y component of the velocity by the factor
         jumpForce *= factor;
 
         // Update the player's velocity
-        Player.Instance.m_ActiveJumpSpeed = jumpForce;
+        Player.Instance.m_ActiveJumpSpeed = fjumpForce;
         PlayParticleEffect();
     }
 
@@ -229,7 +229,7 @@ public class BehaviourBox : Box, IPlayParticle
                 BoostSpeed(speedTimeLength, speedFactor);
                 break;
             case BehaviourBoxTypes.teleportBox:
-                Teleport(teleportTimeLength,teleportTarget);
+                Teleport(teleportTimeLength, teleportTarget);
                 break;
 
             case BehaviourBoxTypes.bounceBox:
@@ -240,15 +240,39 @@ public class BehaviourBox : Box, IPlayParticle
                 }
                 break;
         }
-        
+
     }
     private void OnTriggerExit(Collider other)
     {
-        if (jumpIncreased == true && other.CompareTag("Player"))
+        
+        switch (bbt)
         {
-            IncreaseJumpSpeed(1 / jumpFactor);
-            jumpIncreased = false;
+            /*
+            case BehaviourBoxTypes.movingPlatform:
+                MovePlatform(moveTarget.position);
+                break;
+            case BehaviourBoxTypes.sizeBox:
+                EnlargePlayer(sizeFactor);
+                break;
+            case BehaviourBoxTypes.gravityBox:
+                ReverseGravity();
+                break;
+            case BehaviourBoxTypes.speedBox:
+                BoostSpeed(speedTimeLength, speedFactor);
+                break;
+            case BehaviourBoxTypes.teleportBox:
+                Teleport(teleportTimeLength, teleportTarget);
+                break;
+            */
+            case BehaviourBoxTypes.bounceBox:
+                if (jumpIncreased == true && other.CompareTag("Player"))
+                {
+                    IncreaseJumpSpeed(1 / jumpFactor);
+                    jumpIncreased = false;
+                }
+                break;
         }
+
     }
 
     //When Switch switches, apply effect here
