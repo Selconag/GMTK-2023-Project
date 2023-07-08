@@ -10,7 +10,10 @@ public class Box : MonoBehaviour
     [SerializeField] protected bool m_IsPhysicsEnabled = true;
 
     [Header("References")]
+    [SerializeField] protected AnimationClip m_AnimClip;
+    [SerializeField] protected AudioClip m_AudioClip;
     [SerializeField] protected ParticleSystem m_ParticleSystem;
+    [SerializeField] protected Light m_ChangeLight;
 
     public virtual void ApplyBoxEffect()
     {
