@@ -7,12 +7,12 @@ public class ItemBox : Box,IBoxes
     public GameObject go;
     public void onAttach()
     {
-        Player.instance.Equip(go);
+        Player.Instance.Equip(go);
     }
 
     public void onDetach()
     {
-        Player.instance.Unequip(go);
+        Player.Instance.Unequip(go);
     }
     //When boxes connect together, apply effect here
     public override void ApplyBoxEffect()

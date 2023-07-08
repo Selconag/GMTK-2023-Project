@@ -4,9 +4,5 @@ using UnityEngine;
 
 public interface IPlayParticle
 {
-    public void PlayParticleEffect(ParticleSystem targetParticle)
-    {
-        targetParticle.gameObject.SetActive(true);
-        targetParticle.Play();
-    }
+    public void PlayParticleEffect();
 }

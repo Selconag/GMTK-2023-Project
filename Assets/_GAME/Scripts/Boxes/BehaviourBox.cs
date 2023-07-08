@@ -7,7 +7,7 @@ using UnityEngine;
  */
 
 
-public class BehaviourBox : Box
+public class BehaviourBox : Box, IPlayParticle
 {
     public enum BehaviourBoxTypes { movingPlatform, musicBox, sizeBox, gravityBox, speedBox, teleportBox, enemySpawn, bounceBox, physicsBox, transformBox, powerUp, cameraShot }
 
@@ -24,7 +24,8 @@ public class BehaviourBox : Box
     #region sizeBox
         public void EnlargePlayer(int sizeFactor)
         {
-            Player.instance.transform.localScale *= sizeFactor;
+            Player.Instance.transform.localScale *= sizeFactor;
+            PlayParticleEffect();
         }
     #endregion
 
@@ -34,7 +35,7 @@ public class BehaviourBox : Box
 
     public void ReverseGravity()
     {
-        Vector3 playerScale = Player.instance.transform.localScale;
+        Vector3 playerScale = Player.Instance.transform.localScale;
         playerScale.y *= -1.0f;
 
         if (isUpsideDown)
@@ -46,7 +47,7 @@ public class BehaviourBox : Box
             Physics.gravity = new Vector3(0, 9.81f);
         }
 
-        Player.instance.transform.localScale = playerScale;
+        Player.Instance.transform.localScale = playerScale;
     }
     #endregion
 
@@ -103,6 +104,7 @@ public class BehaviourBox : Box
         {
             transform.position = targetArea.position;
             isTeleporting = false;
+            PlayParticleEffect();
         }
     }
     #endregion
@@ -182,6 +184,7 @@ public class BehaviourBox : Box
         // Break the box, preventing further creature spawns
         isBroken = true;
         Debug.Log("Box is broken");
+        PlayParticleEffect();
     }
     #endregion
 
@@ -191,13 +194,14 @@ public class BehaviourBox : Box
     public void IncreaseJumpSpeed(float factor)
     {
         // Get the current velocity of the player
-        Vector3 jumpForce = Player.instance.m_Speed;
+        float jumpForce = Player.Instance.m_ActiveJumpSpeed;
 
         // Multiply the y component of the velocity by the factor
         jumpForce *= factor;
 
         // Update the player's velocity
-        Player.instance.m_Speed = jumpForce;
+        Player.Instance.m_ActiveJumpSpeed = jumpForce;
+        PlayParticleEffect();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -223,5 +227,11 @@ public class BehaviourBox : Box
     {
 
     }
-    
+
+    public void PlayParticleEffect()
+    {
+        if (m_ParticleSystem == null) return;
+        m_ParticleSystem.gameObject.SetActive(true);
+        m_ParticleSystem.Play();
+    }
 }
