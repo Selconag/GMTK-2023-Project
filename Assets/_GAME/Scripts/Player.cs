@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
     /// </summary>
     public static Player instance;
 
+
+
     private void Awake()
     {
         instance = this;
@@ -41,14 +43,12 @@ public class Player : MonoBehaviour
     /// <param name="go">The game object to equip.</param>
     public void Equip(GameObject go)
     {
-        //Instantiate(go, m_ObjectSlot.position, m_ObjectSlot.rotation, m_ObjectSlot);
-        
+        go.SetActive(true);
         m_ObjectSlot = go.transform;
     }
     public void Unequip(GameObject go)
     {
-        //DestroyImmediate(go, true);
-  
+        go.SetActive(false);
         m_ObjectSlot = null;    
     }
     void Start()

@@ -9,9 +9,8 @@ public class CharacterBox : Box
     /// <summary>
     /// List of boxes currently attached to this character box.
     /// </summary>
-
     [SerializeField] public List<IBoxes> attachedBoxes = new();
-    
+
     /// <summary>
     /// Attaches a box to this character box.
     /// </summary>
@@ -23,30 +22,38 @@ public class CharacterBox : Box
             Debug.Log("Box is null");
             return;
         }
-        
+
         attachedBoxes.Add(box);
         box.onAttach();
-        Debug.Log("Amount of attached boxes: "+ attachedBoxes.Count);
+        Debug.Log("Amount of attached boxes: " + attachedBoxes.Count);
     }
+
+    /// <summary>
+    /// Detaches a box from this character box.
+    /// </summary>
+    /// <param name="box">The box to detach.</param>
     public void DetachBox(IBoxes box)
     {
         attachedBoxes.Remove(box);
         box.onDetach();
         Debug.Log("Amount of attached boxes: " + attachedBoxes.Count);
     }
-    //When boxes connect together, apply effect here
+
+    /// <summary>
+    /// Applies the effect of the attached boxes.
+    /// </summary>
     public override void ApplyBoxEffect()
     {
-       
+        // Implement the desired effect of the attached boxes here
     }
-
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("CollectableBox")){
+        if (other.CompareTag("CollectableBox"))
+        {
             AttachBox(other.GetComponent<IBoxes>());
-            Debug.Log("We have attached"+ other.name.ToString()+ "with the Character Object!");
-            // Calculate the position offset based on the direction from which the other object comes
+            Debug.Log("We have attached " + other.name.ToString() + " with the Character Object!");
+
             // Calculate the position offset based on the direction from which the other object comes
             Vector3 positionOffset = Vector3.zero;
             Vector3 characterSize = GetComponent<Collider>().bounds.size;
@@ -67,15 +74,16 @@ public class CharacterBox : Box
 
             // Snap the other object adjacent to the character object
             other.transform.position = transform.position + positionOffset;
-
         }
     }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("CollectableBox"))
         {
             DetachBox(other.GetComponent<IBoxes>());
-            Debug.Log("We have detached" + other.name.ToString() + "from the Character Object!");
+            Debug.Log("We have detached " + other.name.ToString() + " from the Character Object!");
+
             other.transform.parent = null;
         }
     }
