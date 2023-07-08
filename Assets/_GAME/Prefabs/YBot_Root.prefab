@@ -1677,7 +1677,7 @@ MonoBehaviour:
   m_WeaponEnabled: 0
   m_BaseHorizontalSpeed: 10
   m_ActiveHorizontalSpeed: 0
-  m_BaseJumpSpeed: 10
+  m_BaseJumpSpeed: 5
   m_ActiveJumpSpeed: 0
   m_ActiveVelocity: {x: 0, y: 0}
   m_ActiveRotation: -90
@@ -1690,6 +1690,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   m_References: 0
   m_ObjectSlot: {fileID: 3461917958341201991}
+  m_Scanner: {fileID: 0}
   m_Controller: {fileID: 4667831703901692959}
   m_Animator: {fileID: 480855200023686320}
 --- !u!95 &480855200023686320
