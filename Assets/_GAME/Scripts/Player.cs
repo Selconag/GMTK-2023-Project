@@ -41,7 +41,15 @@ public class Player : MonoBehaviour
     /// <param name="go">The game object to equip.</param>
     public void Equip(GameObject go)
     {
+        //Instantiate(go, m_ObjectSlot.position, m_ObjectSlot.rotation, m_ObjectSlot);
+        
         m_ObjectSlot = go.transform;
+    }
+    public void Unequip(GameObject go)
+    {
+        //DestroyImmediate(go, true);
+  
+        m_ObjectSlot = null;    
     }
     void Start()
     {
