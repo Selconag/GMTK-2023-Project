@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
-    public GameObject MainMenuPanel, OptionsMenuPanel, PauseMenuPanel;
-    public GameObject GUIPanel;
-    private bool optionsOpen;
+    [Header("Variables")]
+    [SerializeField] bool m_OptionsOpen;
+
+    [Header("References")]
+    [SerializeField] GameObject m_MainMenuPanel, m_OptionsMenuPanel, m_PauseMenuPanel;
+    [SerializeField] GameObject m_GUIPanel;
+
 
     public static Action GameStarted;
     public static MenuManager Instance;
@@ -16,16 +20,16 @@ public class MenuManager : MonoBehaviour
 
     public void StartGame()
     {
-        MainMenuPanel.SetActive(false);
-        GUIPanel.SetActive(true);
+        m_MainMenuPanel.SetActive(false);
+        m_GUIPanel.SetActive(true);
         Debug.Log("Game Started");
         GameStarted?.Invoke();
     }
 
     public void ToggleOptions()
     { 
-        optionsOpen =! optionsOpen;
-        OptionsMenuPanel.SetActive(optionsOpen);
+        m_OptionsOpen =! m_OptionsOpen;
+        m_OptionsMenuPanel.SetActive(m_OptionsOpen);
         Debug.Log("Options");
     }
 

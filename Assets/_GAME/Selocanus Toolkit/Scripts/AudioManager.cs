@@ -10,51 +10,51 @@ namespace SelocanusToolkit
         {
             Instance = this;
         }
-
-        [SerializeField] AudioSource AudioSource;
-        [SerializeField] AudioClip SuccessSound;
-        [SerializeField] AudioClip FailureSound;
-        [SerializeField] AudioClip MergeSound;
-        [SerializeField] AudioClip WrongMergeSound;
-        [SerializeField] AudioClip LevelCompleteSound;
-        [SerializeField] AudioClip UIClickSound;
+        [Header("References")]
+        [SerializeField] AudioSource m_AudioSource;
+        [SerializeField] AudioClip m_SuccessSound;
+        [SerializeField] AudioClip m_FailureSound;
+        [SerializeField] AudioClip m_ConnectSound;
+        [SerializeField] AudioClip m_BreakingSound;
+        [SerializeField] AudioClip m_LevelCompleteSound;
+        [SerializeField] AudioClip m_UIClickSound;
 
         public void PlayCustomSoundSound(AudioClip customClip)
         {
-            AudioSource.clip = customClip;
-            AudioSource.Play();
+            m_AudioSource.clip = customClip;
+            m_AudioSource.Play();
         }
 
         public void PlaySuccessSound()
         {
-            AudioSource.clip = SuccessSound;
-            AudioSource.Play();
+            m_AudioSource.clip = m_SuccessSound;
+            m_AudioSource.Play();
         }
         public void PlayFailureSound()
         {
-            AudioSource.clip = FailureSound;
-            AudioSource.Play();
+            m_AudioSource.clip = m_FailureSound;
+            m_AudioSource.Play();
         }
-        public void PlayMergeSound()
+        public void PlayConnectSound()
         {
-            AudioSource.clip = MergeSound;
-            AudioSource.Play();
+            m_AudioSource.clip = m_ConnectSound;
+            m_AudioSource.Play();
         }
-        public void PlayWrongMergeSound()
+        public void PlayBreakingSound()
         {
-            AudioSource.clip = WrongMergeSound;
-            AudioSource.Play();
+            m_AudioSource.clip = m_BreakingSound;
+            m_AudioSource.Play();
         }
         public void PlayLevelCompleteSound()
         {
-            AudioSource.clip = LevelCompleteSound;
-            AudioSource.Play();
+            m_AudioSource.clip = m_LevelCompleteSound;
+            m_AudioSource.Play();
         }
 
         public void PlayUIClickSound()
         {
-            AudioSource.clip = UIClickSound;
-            AudioSource.Play();
+            m_AudioSource.clip = m_UIClickSound;
+            m_AudioSource.Play();
         }
     }
 }
