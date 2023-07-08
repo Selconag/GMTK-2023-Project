@@ -9,8 +9,8 @@ public class Player : MonoBehaviour
     /// </summary>
     [Header("Variables")]
     [SerializeField] bool m_WeaponEnabled;
-    [SerializeField] float m_BaseHorizontalSpeed = 10f, m_ActiveHorizontalSpeed;
-    [SerializeField] float m_BaseJumpSpeed = 10f, m_ActiveJumpSpeed;
+    public float m_BaseHorizontalSpeed = 10f, m_ActiveHorizontalSpeed;
+    public float m_BaseJumpSpeed = 10f, m_ActiveJumpSpeed;
     [SerializeField] Vector2 m_ActiveVelocity;
     [SerializeField] float m_ActiveRotation = -90;
     [SerializeField] bool m_InverseDirection = true;
@@ -40,13 +40,13 @@ public class Player : MonoBehaviour
     /// <summary>
     /// An instance for the Player class for Singleton.
     /// </summary>
-    public static Player instance;
+    public static Player Instance;
 
 
 
     private void Awake()
     {
-        instance = this;
+        Instance = this;
     }
     /// <summary>
     /// Equips a game object by assigning its transform to the object slot when ItemBox attaches to CharacterBox.

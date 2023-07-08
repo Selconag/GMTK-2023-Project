@@ -9,6 +9,9 @@ public class Box : MonoBehaviour
     [SerializeField] protected bool m_IsMoveable = true;
     [SerializeField] protected bool m_IsPhysicsEnabled = true;
 
+    [Header("References")]
+    [SerializeField] protected ParticleSystem m_ParticleSystem;
+
     public virtual void ApplyBoxEffect()
     {
 
