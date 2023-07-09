@@ -20,6 +20,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
         transform.position = Vector3.Lerp(moveStartPosition, moveTarget.position, 1);
     }
     #endregion
+
     #region sizeBox
         public int sizeFactor = 2;
         public void EnlargePlayer(int sizeFactor)
@@ -28,6 +29,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
             PlayParticleEffect();
         }
     #endregion
+
     #region gravityBox
     public bool isUpsideDown = false;
 
@@ -48,6 +50,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
         Player.Instance.transform.localScale = playerScale;
     }
     #endregion
+
     #region speedBox
     private bool isBoosted = false;
     private float baseSpeed;
@@ -78,6 +81,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
     }
 
     #endregion
+
     #region teleportBox
     public Transform teleportTarget;
     private bool isTeleporting = false;
@@ -106,6 +110,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
         }
     }
     #endregion
+
     #region enemySpawn
     public int spawnInterval = 10; // The interval in seconds between creature spawns
     public bool isBroken = false; // Indicates if the box is broken
@@ -184,6 +189,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
         PlayParticleEffect();
     }
     #endregion
+
     #region BounceBox
     public bool jumpIncreased = false;
     public float jumpFactor = 2.0f;
@@ -298,9 +304,82 @@ public class BehaviourBox : Box, IPlayBoxEvents
     }
     #endregion
 
+    #region transformBox
 
+    public GameObject playerMesh;
+    public GameObject triggerBox;
+    public float maxRollingTime = 30f;
+    public int maxEnemiesHit = 3;
 
+    private bool isRolling = false;
+    private int enemiesHit = 0;
 
+    private float rollingTimer = 0f;
+    private Color transformStartColor = Color.red;
+    private Color rollingColor = Color.green;
+    private Renderer triggerRenderer;
+
+    private CharacterController characterController;
+
+    private void Awake()
+    {
+        characterController = GetComponent<CharacterController>();
+    }
+
+    public void StartRolling()
+    {
+        if (!isRolling)
+        {
+            isRolling = true;
+            rollingTimer = 0f;
+            enemiesHit = 0;
+
+            // Change trigger box color to rollingColor
+            SetTriggerBoxColor(rollingColor);
+
+            // Convert player mesh into a ball
+            ConvertToBall(true);
+
+            StartCoroutine(RollingTimer());
+        }
+    }
+
+    private IEnumerator RollingTimer()
+    {
+        while (rollingTimer < maxRollingTime && enemiesHit < maxEnemiesHit)
+        {
+            rollingTimer += Time.deltaTime;
+            yield return null;
+        }
+
+        // End of rolling, change trigger box color to startColor
+        SetTriggerBoxColor(transformStartColor);
+
+        // Convert player mesh back to normal
+        ConvertToBall(false);
+    }
+
+    private void SetTriggerBoxColor(Color color)
+    {
+        if (triggerRenderer == null)
+        {
+            triggerRenderer = triggerBox.GetComponent<Renderer>();
+        }
+
+        triggerRenderer.material.color = color;
+    }
+
+    private void ConvertToBall(bool isBall)
+    {
+        playerMesh.SetActive(!isBall);
+        characterController.enabled = !isBall;
+    }
+
+    #endregion
+
+    #region powerup
+
+    #endregion
     public BehaviourBoxTypes bbt;
     private void OnTriggerEnter(Collider other)
     {
@@ -309,15 +388,19 @@ public class BehaviourBox : Box, IPlayBoxEvents
             case BehaviourBoxTypes.movingPlatform:
                 MovePlatform(moveTarget.position);
                 break;
+
             case BehaviourBoxTypes.sizeBox:
                 EnlargePlayer(sizeFactor);
                 break;
+
             case BehaviourBoxTypes.gravityBox:
                 ReverseGravity();
                 break;
+
             case BehaviourBoxTypes.speedBox:
                 BoostSpeed(speedTimeLength, speedFactor);
                 break;
+
             case BehaviourBoxTypes.teleportBox:
                 Teleport(teleportTimeLength, teleportTarget);
                 break;
@@ -329,8 +412,28 @@ public class BehaviourBox : Box, IPlayBoxEvents
                     IncreaseJumpSpeed(jumpFactor);
                 }
                 break;
+
             case BehaviourBoxTypes.physicsBox:
                 ActivatePlatforms();
+                break;
+
+            case BehaviourBoxTypes.transformBox:
+                if (isRolling && other.CompareTag("Enemy"))
+                {
+                    // Destroy the enemy
+                    Destroy(other.gameObject);
+
+                    // Increment enemies hit count
+                    enemiesHit++;
+
+                    if (enemiesHit >= maxEnemiesHit)
+                    {
+                        // Reached max enemies hit, end the rolling
+                        StopCoroutine(RollingTimer());
+                        SetTriggerBoxColor(transformStartColor);
+                        ConvertToBall(false);
+                    }
+                }
                 break;
         }
     }

@@ -83,7 +83,6 @@ public class CharacterBox : Box
         {
             DetachBox(other.GetComponent<IBoxes>());
             Debug.Log("We have detached " + other.name.ToString() + " from the Character Object!");
-
             other.transform.parent = null;
         }
     }
