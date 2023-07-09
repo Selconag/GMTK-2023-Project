@@ -93,6 +93,7 @@ public class Player : MonoBehaviour
         GeneralMove();
 
         if (Input.GetKey(KeyCode.E)) ObjectInteraction();
+        
     }
 
     public void LookVertical()
