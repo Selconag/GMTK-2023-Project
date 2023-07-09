@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     public bool m_References;
     [SerializeField] Transform m_Scanner;
     [SerializeField] public Animator Animator;
+    [SerializeField] Camera m_Camera;
 
     /// <summary>
     /// transform of the weapon slot
@@ -64,11 +65,18 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
+        LookVertical();
+
         CheckForGround();
 
         GeneralMove();
 
         if (Input.GetKey(KeyCode.E)) ObjectInteraction();
+    }
+
+    public void LookVertical()
+    {
+        float lookDirection = Input.GetAxis("Vertical");
     }
 
     public void GeneralMove()

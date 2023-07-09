@@ -1554,6 +1554,7 @@ Transform:
   - {fileID: 7825149934437181010}
   - {fileID: 5163855144452408297}
   - {fileID: 3645182486661823420}
+  - {fileID: 4420280007753958871}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1570,9 +1571,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_WeaponEnabled: 0
+  m_BaseHorizontalSpeed: 10
+  m_ActiveHorizontalSpeed: 0
+  m_BaseJumpSpeed: 10
+  m_ActiveJumpSpeed: 0
+  m_ActiveVelocity: {x: 0, y: 0}
+  m_ActiveRotation: -90
+  m_InverseDirection: 1
+  TurningCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  CanJump: 0
+  CanPull: 0
+  CanSmash: 0
   m_References: 0
+  m_Scanner: {fileID: 4420280007753958871}
+  Animator: {fileID: 480855200023686320}
   m_ObjectSlot: {fileID: 3461917958341201991}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 4667831703901692959}
 --- !u!95 &480855200023686320
 Animator:
   serializedVersion: 5
@@ -1841,6 +1860,37 @@ Transform:
   m_Children:
   - {fileID: 2313029084233661611}
   m_Father: {fileID: 5636872361373462326}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5945560084598593547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4420280007753958871}
+  m_Layer: 0
+  m_Name: Scanner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4420280007753958871
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5945560084598593547}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7640180553433344785}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6047626409308390785

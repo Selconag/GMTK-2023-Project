@@ -181,6 +181,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1762960640523384920}
+  - component: {fileID: 8384442276636669231}
+  - component: {fileID: 226576287409125330}
   m_Layer: 0
   m_Name: UselessBox_Root
   m_TagString: Untagged
@@ -205,6 +207,46 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8384442276636669231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7009201256173663904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68b4ad48bb27844498345fb527b77d22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsBreakable: 0
+  m_IsMoveable: 0
+  m_IsPhysicsEnabled: 0
+  m_AnimClip: {fileID: 0}
+  m_AudioClip: {fileID: 0}
+  m_ParticleSystem: {fileID: 0}
+  m_ChangeLight: {fileID: 0}
+--- !u!65 &226576287409125330
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7009201256173663904}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7464299409781995616
 GameObject:
   m_ObjectHideFlags: 0
