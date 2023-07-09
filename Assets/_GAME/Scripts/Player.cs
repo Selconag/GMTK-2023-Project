@@ -21,11 +21,13 @@ public class Player : MonoBehaviour
     float ySpeed;
     int activeStopAngle = 180;
     public float ClimbCoefficient = 100;
-
+    public float JumpCoefficient = 1;
     public Transform GroundCheck;
     public LayerMask GroundLayer;
-    public float GroundDistance = 0.2f;
+    public float GroundDistance = 0.0f;
 
+    private int m_CollisionCount = 0;
+    public bool IsColliding { get { return m_CollisionCount > 0; } }
     /// <summary>
     /// Indicates whether the references are enabled for the player.
     /// </summary>
@@ -51,8 +53,6 @@ public class Player : MonoBehaviour
     /// </summary>
     public static Player Instance;
 
-
-
     private void Awake()
     {
         Instance = this;
@@ -60,8 +60,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        this.Animator.updateMode = AnimatorUpdateMode.AnimatePhysics;
         m_ActiveHorizontalSpeed = m_BaseHorizontalSpeed;
-        m_ActiveJumpSpeed = m_BaseJumpSpeed;
+        m_ActiveJumpSpeed = m_BaseJumpSpeed * JumpCoefficient;
         if (m_InverseDirection)
         {
             activeStopAngle = 180;
@@ -79,7 +80,10 @@ public class Player : MonoBehaviour
         if (other.transform.tag == "Box" || other.transform.tag == "Door")
             Climb();
     }
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        m_CollisionCount++;
+    }
     private void OnCollisionStay(Collision collision)
     {
         if (collision.collider.transform.tag == "Box" || collision.collider.transform.tag == "Door")
@@ -89,6 +93,7 @@ public class Player : MonoBehaviour
     private void OnCollisionExit(Collision collision)
     {
         m_Rigid.useGravity = true;
+        m_CollisionCount--;
     }
 
     public void Climb()
@@ -103,7 +108,6 @@ public class Player : MonoBehaviour
             m_Rigid.MovePosition(transform.position + m_ActiveVelocity * Time.deltaTime * m_BaseJumpSpeed * ClimbCoefficient);
         }
     }
-
 
     /// <summary>
     /// Equips a game object by assigning its transform to the object slot when ItemBox attaches to CharacterBox.
@@ -136,6 +140,7 @@ public class Player : MonoBehaviour
         float lookDirection = Input.GetAxis("Vertical");
     }
 
+
     public void GeneralMove()
     {
         m_ActiveVelocity = new Vector2(-Input.GetAxis("Horizontal") * m_ActiveHorizontalSpeed, 0);
@@ -161,13 +166,16 @@ public class Player : MonoBehaviour
         //    Debug.Log("Jump");
         //}
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            ySpeed = m_ActiveJumpSpeed;
-            Animator.SetBool("IsOnGround", false);
-            SetRunning(false);
-            Debug.Log("Jump");
-        }
+            if (Input.GetButtonDown("Jump"))
+            {
+
+                    ySpeed = m_ActiveJumpSpeed;
+                    Vector3 jumpForce = new Vector3(0f, ySpeed, 0f);
+                    m_Rigid.AddForce(jumpForce, ForceMode.VelocityChange);
+                    Animator.SetBool("IsOnGround", false);
+                    SetRunning(false);
+                    Debug.Log("Jump");
+            }
 
         //m_ActiveVelocity.y = ySpeed;
         if (m_CanRun)
@@ -199,7 +207,6 @@ public class Player : MonoBehaviour
         }
     }
 
-
     public void SetRunning(bool newVal)
     {
         m_CanRun = newVal;
@@ -213,11 +220,57 @@ public class Player : MonoBehaviour
         SetRunning(true);
     }
 
+    public float GroundCheckRadius;
+    bool IsOnGround(out Vector3 groundNormal)
+    {
+        groundNormal = Vector3.zero;
+
+        if (!IsColliding) return false; // If we're not colliding with anything, we're not grounded.
+
+        // Physics "contacts" can actually have some minor separation, so let's add a margin.
+        float margin = Physics.defaultContactOffset;
+
+        // Start your check from a little above the bottom of your capsule.
+        // I like to set up my colliders so "foot position" is always transform.position,
+        // but your setup may vary. I like to make my ground check radius 1 margin smaller
+        // than my capsule radius, to make sure my check never starts already in-contact
+        // with an obstacle.
+        Vector3 checkOrigin = GroundCheck.position
+                            + new Vector3(0, GroundCheckRadius + margin, 0);
+
+        // Check for a collision under our feet.
+        if (Physics.SphereCast(
+                 checkOrigin,        // Start just above the bottom of our capsule,
+                 GroundCheckRadius,  // with a sphere slightly smaller than our capsule.
+                 Vector3.down,       // Fire it downwards,
+                 out RaycastHit hit, // and record what it hits,
+                 2 * margin,         // going just far enough to catch a touching contact,
+                 GroundLayer        // with anything marked "ground".
+        ) == false) return false;    // If we didn't hit anything, we're not grounded.
+
+       
+
+        // Otherwise, we are grounded. Extract the ground normal and return true.
+        groundNormal = hit.normal;
+        return true;
+    }
+
+
     bool IsPlayerGrounded()
     {
         // Perform a raycast from the groundCheck position downward
         RaycastHit hit;
         bool grounded = Physics.Raycast(GroundCheck.position, Vector3.down, out hit, GroundDistance, GroundLayer);
+
+        if (grounded)
+        {
+            Debug.Log("You are grounded");
+        }
+        else
+        {
+            Debug.Log("Your Ground Distance:" + GroundDistance);
+            Debug.Log("You are in the air");
+        }
 
         // Return true if the raycast hits the ground
         return grounded;
