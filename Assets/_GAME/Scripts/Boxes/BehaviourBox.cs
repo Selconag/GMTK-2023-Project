@@ -87,6 +87,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
     private bool isTeleporting = false;
     private Vector3 teleportTargetArea;
     public float teleportTimeLength = 1.5f;
+    private float ttL;
     public void Teleport(float timeLength, Transform target)
     {
         if (!isTeleporting)
@@ -378,6 +379,16 @@ public class BehaviourBox : Box, IPlayBoxEvents
     #endregion
 
     #region powerup
+    public float smashTimer = 30f;
+
+    private IEnumerator LemmeSmash()
+    {
+        Player.Instance.CanSmash = true;
+
+        yield return new WaitForSeconds(smashTimer);
+
+        Player.Instance.CanSmash = false;
+    }
 
     #endregion
     public BehaviourBoxTypes bbt;
@@ -402,6 +413,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
                 break;
 
             case BehaviourBoxTypes.teleportBox:
+                ttL = teleportTimeLength;
                 Teleport(teleportTimeLength, teleportTarget);
                 break;
 
@@ -435,6 +447,10 @@ public class BehaviourBox : Box, IPlayBoxEvents
                     }
                 }
                 break;
+
+            case BehaviourBoxTypes.powerUp:
+                StartCoroutine(LemmeSmash());
+                break;
         }
     }
     private void OnTriggerExit(Collider other)
@@ -455,10 +471,12 @@ public class BehaviourBox : Box, IPlayBoxEvents
             case BehaviourBoxTypes.speedBox:
                 BoostSpeed(speedTimeLength, speedFactor);
                 break;
-            case BehaviourBoxTypes.teleportBox:
-                Teleport(teleportTimeLength, teleportTarget);
-                break;
             */
+            case BehaviourBoxTypes.teleportBox:
+                isTeleporting = false;
+                teleportTimeLength = ttL;
+                break;
+            
             case BehaviourBoxTypes.bounceBox:
                 if (jumpIncreased == true && other.CompareTag("Player"))
                 {
