@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 {
     public static Action LevelFail, LevelSucces;
     private static GameManager _Instance;
+    public int NextSceneIndex;
+    public int ActiveSceneIndex;
 
     private GameManager() { }
 
@@ -32,12 +34,12 @@ public class GameManager : MonoBehaviour
     #region Scene Management
     public void LoadNextScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(ActiveSceneIndex + 1);
     }
 
     public void ReLoadScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(ActiveSceneIndex);
     }
     #endregion
 

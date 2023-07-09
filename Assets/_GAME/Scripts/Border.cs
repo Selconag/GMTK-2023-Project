@@ -10,5 +10,6 @@ public class Border : MonoBehaviour
     public void KillHittingObject(Collider target)
     {   
         if(target == null) return;
+        GameManager.Instance.ReLoadScene();
     }
 }

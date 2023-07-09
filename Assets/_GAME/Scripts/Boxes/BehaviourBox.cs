@@ -7,21 +7,66 @@ using UnityEngine.PlayerLoop;
 
 public class BehaviourBox : Box, IPlayBoxEvents
 {
-    public enum BehaviourBoxTypes { movingPlatform, musicBox, sizeBox, gravityBox, speedBox, teleportBox, enemySpawn, bounceBox, physicsBox, transformBox, powerUp, cameraShot, doorBox }
+    public enum BehaviourBoxTypes { movingPlatform, musicBox, sizeBox, gravityBox, speedBox, teleportBox, enemySpawn, bounceBox, physicsBox, transformBox, powerUp, cameraShot, doorBox, levelEndBox }
 
     public bool IsTriggered;
     private Transform PlayerTransform;
 
+    private void Update()
+    {
+        if (!IsTriggered) { return; }
+
+        switch (bbt)
+        {
+            case BehaviourBoxTypes.movingPlatform:
+                if (m_IsMoving)
+                    if (m_MoveTimer < 1)
+                    {
+                         MovePlatform();
+                    }
+                    else
+                    {
+                        PlayerTransform.SetParent(null);
+                        PlayerTransform.localScale = Vector3.one;
+                        m_IsMoving = false;
+                    }
+                break;
+            case BehaviourBoxTypes.teleportBox:
+                if (isTeleporting && !teleported) teleportTimer += Time.deltaTime;
+
+                if (teleportTimer > teleportTimeLength)
+                {
+                    NewTeleport(teleportTarget);
+                    isTeleporting = false;
+                    teleportTimer = 0;
+                }
+                break;
+
+            case BehaviourBoxTypes.enemySpawn:
+                // Increment the timer
+                timer += Time.deltaTime;
+
+                // Check if the spawn interval has passed and the box is not broken
+                if (timer >= spawnInterval && !isBroken)
+                {
+                    SpawnCreature();
+                    timer = 0f; // Reset the timer
+                }
+                break;
+        }
+    }
+
     #region movingPlatform
     public Transform MoveTarget;
     public Transform MoveBase;
+    public Transform CarryZone;
     public Vector3 MoveStartPosition;
-    public void MovePlatform(Vector3 targetPosition)
+    private float m_MoveTimer;
+    private bool m_IsMoving;
+    public void MovePlatform()
     {
-        
-        MoveStartPosition = transform.position;
-
-        transform.position = Vector3.Lerp(MoveStartPosition, MoveTarget.position, 1);
+        m_MoveTimer += Time.deltaTime;
+        transform.position = Vector3.Lerp(MoveBase.position, MoveTarget.position, m_MoveTimer);
     }
     #endregion
 
@@ -53,19 +98,21 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     public void ReverseGravity()
     {
-        Vector3 playerScale = Player.Instance.transform.localScale;
-        playerScale.y *= -1.0f;
+        //Vector3 playerScale = Player.Instance.transform.localScale;
+        //playerScale.y *= -1.0f;
+        Physics.gravity *= -1;
+        //Player.Instance.transform.rotation
 
-        if (isUpsideDown)
-        {
-            Physics.gravity = new Vector3(0, -9.81f);
-        }
-        else
-        {
-            Physics.gravity = new Vector3(0, 9.81f);
-        }
+        //if (isUpsideDown)
+        //{
+        //    Physics.gravity = new Vector3(0, -9.81f);
+        //}
+        //else
+        //{
+        //    Physics.gravity = new Vector3(0, 9.81f);
+        //}
 
-        Player.Instance.transform.localScale = playerScale;
+        //Player.Instance.transform.localScale = playerScale;
     }
     #endregion
 
@@ -117,35 +164,6 @@ public class BehaviourBox : Box, IPlayBoxEvents
         PlayerTransform.GetComponent<CharacterController>().enabled = true;
         target.GetComponent<BehaviourBox>().teleported = true;
     }
-
-    //public void Teleport(float timeLength, Transform target)
-    //{
-    //    if (!isTeleporting)
-    //    {
-    //        isTeleporting = true;
-    //        teleportTargetArea = target.position + Vector3.up;
-    //        PlayParticleEffect();
-    //        StartCoroutine(TeleportAfterTime(timeLength));
-    //    }
-    //}
-
-    //private System.Collections.IEnumerator TeleportAfterTime(float timeLength)
-    //{
-    //    yield return new WaitForSeconds(timeLength);
-
-    //    if (isTeleporting)
-    //    {
-    //        transform.position = teleportTargetArea;
-    //        isTeleporting = false;
-    //    }
-    //}
-
-    //private void CancelTeleport()
-    //{
-    //    isTeleporting = false;
-    //    StopCoroutine(TeleportAfterTime(teleportTimeLength));
-    //    StopParticleEffect();
-    //}
     #endregion
 
     #region enemySpawn
@@ -158,29 +176,6 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     private float timer = 0f; // Timer to track spawn intervals
 
-    private void Update()
-    {
-        if (!IsTriggered && bbt != BehaviourBoxTypes.enemySpawn) { return; }
-
-        // Increment the timer
-        timer += Time.deltaTime;
-
-        // Check if the spawn interval has passed and the box is not broken
-        if (timer >= spawnInterval && !isBroken)
-        {
-            SpawnCreature();
-            timer = 0f; // Reset the timer
-        }
-
-        if (isTeleporting && !teleported) teleportTimer += Time.deltaTime;
-
-        if(teleportTimer > teleportTimeLength)
-        {
-            NewTeleport(teleportTarget);
-            isTeleporting = false;
-            teleportTimer = 0;
-        }
-    }
 
     #region Creature Events
 
@@ -444,6 +439,8 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     #region doorBox
 
+    public List<Transform> Doors;
+
     #endregion
 
     public BehaviourBoxTypes bbt;
@@ -453,11 +450,16 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
         IsTriggered = true;
         PlayerTransform = other.transform;
+        if(m_ActivatedImage != null)
+            m_Sprite.sprite = m_ActivatedImage;
 
         switch (bbt)
         {
             case BehaviourBoxTypes.movingPlatform:
-                MovePlatform(MoveTarget.position);
+                m_IsMoving = true;
+                PlayerTransform = other.transform;
+                //Change hierarchy of player to here
+                PlayerTransform.SetParent(CarryZone);
                 break;
             case BehaviourBoxTypes.musicBox:
                 PlayMusic(m_AudioClip);
@@ -483,9 +485,10 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
             case BehaviourBoxTypes.bounceBox:
                 jumpIncreased = true;
-                if (other.CompareTag("Player"))
+                if (other.transform.tag == "Player")
                 {
-                    IncreaseJumpSpeed(jumpFactor);
+                    //IncreaseJumpSpeed(jumpFactor);
+                    other.transform.GetComponent<Player>().ImmediateJump();
                 }
                 break;
 
@@ -517,7 +520,15 @@ public class BehaviourBox : Box, IPlayBoxEvents
                 break;
                 
             case BehaviourBoxTypes.doorBox:
-                MoveTarget.transform.GetComponent<Door>().ToggleDoor();
+                foreach (var item in Doors)
+                {
+                    item.transform.GetComponent<Door>().ToggleDoor();
+                }
+                PlaySoundEffect();
+                break;
+
+            case BehaviourBoxTypes.levelEndBox:
+                GameManager.Instance.LoadNextScene();
                 break;
         }
     }
@@ -533,7 +544,11 @@ public class BehaviourBox : Box, IPlayBoxEvents
         {
             
             case BehaviourBoxTypes.movingPlatform:
-                MovePlatform(MoveBase.position);
+                m_IsMoving = false;
+                PlayerTransform = other.transform;
+                //Change hierarchy of player to here
+                PlayerTransform.SetParent(null);
+                PlayerTransform.localScale = Vector3.one;
                 break;
             /*
             case BehaviourBoxTypes.sizeBox:

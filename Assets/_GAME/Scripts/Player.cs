@@ -5,6 +5,7 @@ using UnityEngine.InputSystem.HID;
 
 public class Player : MonoBehaviour
 {
+
     /// <summary>
     /// Indicates whether the weapon is enabled for the player.
     /// </summary>
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour
     float ySpeed;
     int activeStopAngle = 180;
     public float ClimbCoefficient = 100;
+    public int PushForceMultiplier = 100;
+    public bool IsWeaponEnabled;
 
     public Transform GroundCheck;
     public LayerMask GroundLayer;
@@ -80,10 +83,27 @@ public class Player : MonoBehaviour
             Climb();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(IsWeaponEnabled)
+            if(collision.collider.tag == "Enemy")
+            {
+                Animator.Play("Attack1");
+                Destroy(collision.collider.gameObject);
+            }
+    }
+
     private void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.transform.tag == "Box" || collision.collider.transform.tag == "Door")
-            Climb();
+        if (Input.GetKey(KeyCode.E))
+        {
+            ObjectInteraction();
+        }
+        else
+        {
+            if (collision.collider.transform.tag == "Box" || collision.collider.transform.tag == "Door")
+                Climb();
+        }
     }
 
     private void OnCollisionExit(Collision collision)
@@ -125,10 +145,7 @@ public class Player : MonoBehaviour
 
         CheckForGround();
 
-        GeneralMove();
-
-        if (Input.GetKey(KeyCode.E)) ObjectInteraction();
-        
+        GeneralMove();        
     }
 
     public void LookVertical()
@@ -164,6 +181,7 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             ySpeed = m_ActiveJumpSpeed;
+
             Animator.SetBool("IsOnGround", false);
             SetRunning(false);
             Debug.Log("Jump");
@@ -179,24 +197,29 @@ public class Player : MonoBehaviour
     public void ObjectInteraction()
     {
         RaycastHit hit;
-        //Search right
-        if (Physics.Raycast(m_Scanner.transform.position, transform.TransformDirection(Vector3.right), out hit, Mathf.Infinity))
+        //Search rightw
+        if (Physics.Raycast(m_Scanner.transform.position, transform.TransformDirection(Vector3.forward), out hit, 1f))
         {
-            if (hit.transform.tag == "Player")
+            if (hit.transform.tag == "Box" && hit.transform.GetComponent<Box>().IsMoveable)
             {
-
+                ObjectPush(hit.transform);
             }
             else return;
         }
-        //Search left
-        if (Physics.Raycast(m_Scanner.transform.position, transform.TransformDirection(Vector3.left), out hit, Mathf.Infinity))
-        {
-            if (hit.transform.tag == "Player")
-            {
+    }
+    //Apply force in the moving direction if we are still pressing the button
+    public void ObjectPull()
+    {
 
-            }
-            else return;
-        }
+    }
+
+    //Apply force in the moving direction if we are still colliding
+    public void ObjectPush(Transform targetObject)
+    {
+        Rigidbody targetRigid = targetObject.GetComponent<Rigidbody>();
+        Vector3 forceDirection = targetObject.position - transform.position;
+        forceDirection.Normalize();
+        targetRigid.AddForceAtPosition(forceDirection * PushForceMultiplier, transform.position, ForceMode.Impulse);
     }
 
 
@@ -221,5 +244,12 @@ public class Player : MonoBehaviour
 
         // Return true if the raycast hits the ground
         return grounded;
+    }
+
+    public void ImmediateJump()
+    {
+        m_ActiveJumpSpeed = m_BaseJumpSpeed * 5;
+        Vector3 jumpForce = new Vector3(0f, m_ActiveJumpSpeed, 0f);
+        m_Rigid.AddForce(jumpForce, ForceMode.VelocityChange);
     }
 }
