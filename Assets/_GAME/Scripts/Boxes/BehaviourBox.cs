@@ -323,7 +323,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     private void Awake()
     {
-        characterController = GetComponent<CharacterController>();
+        characterController = Player.Instance.GetComponent<CharacterController>();
     }
 
     public void StartRolling()
