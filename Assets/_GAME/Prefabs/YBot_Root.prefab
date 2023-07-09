@@ -1534,7 +1534,7 @@ GameObject:
   - component: {fileID: 4667831703901692959}
   m_Layer: 0
   m_Name: YBot_Root
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1571,9 +1571,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_WeaponEnabled: 0
-  m_BaseHorizontalSpeed: 10
+  m_BaseHorizontalSpeed: -10
   m_ActiveHorizontalSpeed: 0
-  m_BaseJumpSpeed: 10
+  m_BaseJumpSpeed: 7
   m_ActiveJumpSpeed: 0
   m_ActiveVelocity: {x: 0, y: 0}
   m_ActiveRotation: -90
@@ -1590,8 +1590,9 @@ MonoBehaviour:
   m_References: 0
   m_Scanner: {fileID: 4420280007753958871}
   Animator: {fileID: 480855200023686320}
+  m_Camera: {fileID: 0}
   m_ObjectSlot: {fileID: 3461917958341201991}
-  m_Controller: {fileID: 4667831703901692959}
+  Controller: {fileID: 4667831703901692959}
 --- !u!95 &480855200023686320
 Animator:
   serializedVersion: 5

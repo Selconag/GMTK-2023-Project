@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3114351301593356016}
   - component: {fileID: 5280035049463470040}
   - component: {fileID: 6675431967372258388}
-  - component: {fileID: 325185372335430610}
   - component: {fileID: 9195027607934605290}
   m_Layer: 0
   m_Name: BehaviourBox_Root
@@ -51,8 +50,12 @@ MonoBehaviour:
   m_IsBreakable: 1
   m_IsMoveable: 1
   m_IsPhysicsEnabled: 1
+  m_AnimClip: {fileID: 0}
+  m_AudioClip: {fileID: 0}
   m_ParticleSystem: {fileID: 0}
+  m_ChangeLight: {fileID: 0}
   moveTarget: {fileID: 0}
+  moveBase: {fileID: 0}
   moveStartPosition: {x: 0, y: 0, z: 0}
   sizeFactor: 2
   isUpsideDown: 0
@@ -67,6 +70,17 @@ MonoBehaviour:
   redEnemies: []
   jumpIncreased: 0
   jumpFactor: 2
+  platforms: []
+  fallDelay: 1
+  riseDelay: 10
+  fallSpeed: 2
+  riseSpeed: 1
+  startColor: {r: 0, g: 1, b: 0, a: 1}
+  endColor: {r: 1, g: 0, b: 0, a: 1}
+  playerMesh: {fileID: 0}
+  triggerBox: {fileID: 0}
+  maxRollingTime: 30
+  maxEnemiesHit: 3
   bbt: 0
 --- !u!65 &6675431967372258388
 BoxCollider:
@@ -89,33 +103,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &325185372335430610
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1107761337433266442}
-  serializedVersion: 4
-  m_Mass: 1000
-  m_Drag: 500
-  m_AngularDrag: 1
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &9195027607934605290
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -131,7 +118,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

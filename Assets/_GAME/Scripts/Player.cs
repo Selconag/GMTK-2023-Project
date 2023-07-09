@@ -18,6 +18,11 @@ public class Player : MonoBehaviour
     bool m_CanRun = true;
     public bool CanJump, CanPull, CanSmash;
     float ySpeed;
+    int activeStopAngle = 180;
+
+    public Transform GroundCheck;
+    public LayerMask GroundLayer;
+    public float GroundDistance = 0.2f;
 
     /// <summary>
     /// Indicates whether the references are enabled for the player.
@@ -36,7 +41,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Character Controller component attached to the player.
     /// </summary>
-    public CharacterController m_Controller;
+    public CharacterController Controller;
 
     /// <summary>
     /// An instance for the Player class for Singleton.
@@ -49,6 +54,22 @@ public class Player : MonoBehaviour
     {
         Instance = this;
     }
+
+    private void Start()
+    {
+        m_ActiveHorizontalSpeed = m_BaseHorizontalSpeed;
+        m_ActiveJumpSpeed = m_BaseJumpSpeed;
+        if (m_InverseDirection)
+        {
+            activeStopAngle = 180;
+
+        }
+        else
+        {
+            activeStopAngle = 0;
+        }
+    }
+
     /// <summary>
     /// Equips a game object by assigning its transform to the object slot when ItemBox attaches to CharacterBox.
     /// </summary>
@@ -83,7 +104,7 @@ public class Player : MonoBehaviour
     {
         m_ActiveVelocity = new Vector2(-Input.GetAxis("Horizontal") * m_ActiveHorizontalSpeed, 0);
 
-        m_ActiveRotation = Input.GetAxis("Horizontal") * 90;
+        m_ActiveRotation = Input.GetAxis("Horizontal") * 90 + 180;
         //m_ActiveRotation = TurningCurve.Evaluate(Mathf.Abs(Input.GetAxis("Horizontal"))) * 90;
 
         //m_ActiveRotation += Input.GetAxis("Horizontal") * 90;
@@ -93,10 +114,10 @@ public class Player : MonoBehaviour
         if (m_InverseDirection) m_ActiveRotation *= -1;
         transform.rotation = Quaternion.Euler(0, m_ActiveRotation, 0);
 
-        if (!m_Controller.isGrounded)
+        if (!Controller.isGrounded)
             ySpeed += Physics.gravity.y * Time.deltaTime;
 
-        if (m_Controller.isGrounded && Input.GetButtonDown("Jump"))
+        if (Controller.isGrounded && Input.GetButtonDown("Jump"))
         {
             ySpeed = m_ActiveJumpSpeed;
             Animator.SetBool("IsOnGround", false);
@@ -105,7 +126,7 @@ public class Player : MonoBehaviour
         }
         m_ActiveVelocity.y = ySpeed;
         if (m_CanRun)
-            m_Controller.Move(m_ActiveVelocity * Time.deltaTime);
+            Controller.Move(m_ActiveVelocity * Time.deltaTime);
         Animator.SetFloat("HorizontalSpeed", Mathf.Abs(m_ActiveVelocity.x));
     }
 
@@ -141,8 +162,18 @@ public class Player : MonoBehaviour
 
     private void CheckForGround()
     {
-        if (!m_Controller.isGrounded) return;
+        if (!Controller.isGrounded) return;
         Animator.SetBool("IsOnGround", true);
         SetRunning(true);
+    }
+
+    bool IsPlayerGrounded()
+    {
+        // Perform a raycast from the groundCheck position downward
+        RaycastHit hit;
+        bool grounded = Physics.Raycast(GroundCheck.position, Vector3.down, out hit, GroundDistance, GroundLayer);
+
+        // Return true if the raycast hits the ground
+        return grounded;
     }
 }

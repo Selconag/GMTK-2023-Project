@@ -6,18 +6,18 @@ using UnityEngine;
 
 public class BehaviourBox : Box, IPlayBoxEvents
 {
-    public enum BehaviourBoxTypes { movingPlatform, musicBox, sizeBox, gravityBox, speedBox, teleportBox, enemySpawn, bounceBox, physicsBox, transformBox, powerUp, cameraShot }
+    public enum BehaviourBoxTypes { movingPlatform, musicBox, sizeBox, gravityBox, speedBox, teleportBox, enemySpawn, bounceBox, physicsBox, transformBox, powerUp, cameraShot, doorBox }
 
     #region movingPlatform
-    public Transform moveTarget;
-    public Transform moveBase;
-    public Vector3 moveStartPosition;
+    public Transform MoveTarget;
+    public Transform MoveBase;
+    public Vector3 MoveStartPosition;
     public void MovePlatform(Vector3 targetPosition)
     {
         
-        moveStartPosition = transform.position;
+        MoveStartPosition = transform.position;
 
-        transform.position = Vector3.Lerp(moveStartPosition, moveTarget.position, 1);
+        transform.position = Vector3.Lerp(MoveStartPosition, MoveTarget.position, 1);
     }
     #endregion
 
@@ -321,9 +321,9 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     private CharacterController characterController;
 
-    private void Awake()
+    private void Start()
     {
-        characterController = Player.Instance.GetComponent<CharacterController>();
+        characterController = Player.Instance.Controller;
     }
 
     public void StartRolling()
@@ -380,13 +380,20 @@ public class BehaviourBox : Box, IPlayBoxEvents
     #region powerup
 
     #endregion
+
+    #region doorBox
+
+    #endregion
+
     public BehaviourBoxTypes bbt;
     private void OnTriggerEnter(Collider other)
     {
+        if (other.transform.tag != "Player") return;
+
         switch (bbt)
         {
             case BehaviourBoxTypes.movingPlatform:
-                MovePlatform(moveTarget.position);
+                MovePlatform(MoveTarget.position);
                 break;
 
             case BehaviourBoxTypes.sizeBox:
@@ -435,15 +442,21 @@ public class BehaviourBox : Box, IPlayBoxEvents
                     }
                 }
                 break;
+
+            case BehaviourBoxTypes.doorBox:
+                MoveTarget.transform.GetComponent<Door>().ToggleDoor();
+                break;
         }
     }
     private void OnTriggerExit(Collider other)
     {
+
+        if (other.transform.tag != "Player") return;
         switch (bbt)
         {
             
             case BehaviourBoxTypes.movingPlatform:
-                MovePlatform(moveBase.position);
+                MovePlatform(MoveBase.position);
                 break;
             /*
             case BehaviourBoxTypes.sizeBox:
