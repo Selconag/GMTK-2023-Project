@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class Player : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class Player : MonoBehaviour
     [SerializeField] bool m_WeaponEnabled;
     public float m_BaseHorizontalSpeed = 10f, m_ActiveHorizontalSpeed;
     public float m_BaseJumpSpeed = 10f, m_ActiveJumpSpeed;
-    [SerializeField] Vector2 m_ActiveVelocity;
+    [SerializeField] Vector3 m_ActiveVelocity;
     [SerializeField] float m_ActiveRotation = -90;
     [SerializeField] bool m_InverseDirection = true;
     [SerializeField] AnimationCurve TurningCurve;
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
     public bool CanJump, CanPull, CanSmash;
     float ySpeed;
     int activeStopAngle = 180;
+    public float ClimbCoefficient = 100;
 
     public Transform GroundCheck;
     public LayerMask GroundLayer;
@@ -32,6 +34,7 @@ public class Player : MonoBehaviour
     [SerializeField] Transform m_Scanner;
     [SerializeField] public Animator Animator;
     [SerializeField] Camera m_Camera;
+    [SerializeField] Rigidbody m_Rigid;
 
     /// <summary>
     /// transform of the weapon slot
@@ -69,6 +72,38 @@ public class Player : MonoBehaviour
             activeStopAngle = 0;
         }
     }
+
+    //Wall Climb system
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.transform.tag == "Box" || other.transform.tag == "Door")
+            Climb();
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.transform.tag == "Box" || collision.collider.transform.tag == "Door")
+            Climb();
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        m_Rigid.useGravity = true;
+    }
+
+    public void Climb()
+    {
+
+        m_ActiveVelocity = new Vector2(0, Input.GetAxis("Vertical"));
+        if(m_ActiveVelocity.magnitude > 0)
+        {
+            m_Rigid.useGravity = false;
+            Debug.Log(m_ActiveVelocity.y);
+            //Controller.Move(m_ActiveVelocity * Time.deltaTime);
+            m_Rigid.MovePosition(transform.position + m_ActiveVelocity * Time.deltaTime * m_BaseJumpSpeed * ClimbCoefficient);
+        }
+    }
+
 
     /// <summary>
     /// Equips a game object by assigning its transform to the object slot when ItemBox attaches to CharacterBox.
@@ -115,19 +150,29 @@ public class Player : MonoBehaviour
         if (m_InverseDirection) m_ActiveRotation *= -1;
         transform.rotation = Quaternion.Euler(0, m_ActiveRotation, 0);
 
-        if (!Controller.isGrounded)
-            ySpeed += Physics.gravity.y * Time.deltaTime;
+        //if (!Controller.isGrounded)
+        //    ySpeed += Physics.gravity.y * Time.deltaTime;
 
-        if (Controller.isGrounded && Input.GetButtonDown("Jump"))
+        //if (Controller.isGrounded && Input.GetButtonDown("Jump"))
+        //{
+        //    ySpeed = m_ActiveJumpSpeed;
+        //    Animator.SetBool("IsOnGround", false);
+        //    SetRunning(false);
+        //    Debug.Log("Jump");
+        //}
+
+        if (Input.GetButtonDown("Jump"))
         {
             ySpeed = m_ActiveJumpSpeed;
             Animator.SetBool("IsOnGround", false);
             SetRunning(false);
             Debug.Log("Jump");
         }
-        m_ActiveVelocity.y = ySpeed;
+
+        //m_ActiveVelocity.y = ySpeed;
         if (m_CanRun)
-            Controller.Move(m_ActiveVelocity * Time.deltaTime);
+            //Controller.Move(m_ActiveVelocity * Time.deltaTime);
+        m_Rigid.MovePosition(transform.position + m_ActiveVelocity * Time.deltaTime);
         Animator.SetFloat("HorizontalSpeed", Mathf.Abs(m_ActiveVelocity.x));
     }
 
@@ -163,7 +208,7 @@ public class Player : MonoBehaviour
 
     private void CheckForGround()
     {
-        if (!Controller.isGrounded) return;
+        //if (!Controller.isGrounded) return;
         Animator.SetBool("IsOnGround", true);
         SetRunning(true);
     }

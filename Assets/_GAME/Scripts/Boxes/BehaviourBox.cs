@@ -1,12 +1,16 @@
 using SelocanusToolkit;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.PlayerLoop;
 
 public class BehaviourBox : Box, IPlayBoxEvents
 {
     public enum BehaviourBoxTypes { movingPlatform, musicBox, sizeBox, gravityBox, speedBox, teleportBox, enemySpawn, bounceBox, physicsBox, transformBox, powerUp, cameraShot, doorBox }
+
+    public bool IsTriggered;
+    private Transform PlayerTransform;
 
     #region movingPlatform
     public Transform MoveTarget;
@@ -98,32 +102,50 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     #region teleportBox
     public Transform teleportTarget;
-    private bool isTeleporting = false;
+    [SerializeField] private bool isTeleporting = false;
     private Vector3 teleportTargetArea;
     public float teleportTimeLength = 1.5f;
+    private float teleportTimer = 0f;
     private float ttL;
-    public void Teleport(float timeLength, Transform target)
-    {
-        if (!isTeleporting)
-        {
-            isTeleporting = true;
-            teleportTargetArea = target.position;
+    public bool teleported;
 
-            StartCoroutine(TeleportAfterTime(timeLength));
-        }
+    public void NewTeleport(Transform target)
+    {
+        teleportTargetArea = target.position + Vector3.up;
+        PlayerTransform.GetComponent<CharacterController>().enabled = false;
+        PlayerTransform.position = teleportTargetArea;
+        PlayerTransform.GetComponent<CharacterController>().enabled = true;
+        target.GetComponent<BehaviourBox>().teleported = true;
     }
 
-    private System.Collections.IEnumerator TeleportAfterTime(float timeLength)
-    {
-        yield return new WaitForSeconds(timeLength);
+    //public void Teleport(float timeLength, Transform target)
+    //{
+    //    if (!isTeleporting)
+    //    {
+    //        isTeleporting = true;
+    //        teleportTargetArea = target.position + Vector3.up;
+    //        PlayParticleEffect();
+    //        StartCoroutine(TeleportAfterTime(timeLength));
+    //    }
+    //}
 
-        if (isTeleporting)
-        {
-            transform.position = teleportTargetArea;
-            isTeleporting = false;
-            PlayParticleEffect();
-        }
-    }
+    //private System.Collections.IEnumerator TeleportAfterTime(float timeLength)
+    //{
+    //    yield return new WaitForSeconds(timeLength);
+
+    //    if (isTeleporting)
+    //    {
+    //        transform.position = teleportTargetArea;
+    //        isTeleporting = false;
+    //    }
+    //}
+
+    //private void CancelTeleport()
+    //{
+    //    isTeleporting = false;
+    //    StopCoroutine(TeleportAfterTime(teleportTimeLength));
+    //    StopParticleEffect();
+    //}
     #endregion
 
     #region enemySpawn
@@ -138,16 +160,29 @@ public class BehaviourBox : Box, IPlayBoxEvents
 
     private void Update()
     {
+        if (!IsTriggered && bbt != BehaviourBoxTypes.enemySpawn) { return; }
+
         // Increment the timer
         timer += Time.deltaTime;
 
         // Check if the spawn interval has passed and the box is not broken
-        if (timer >= spawnInterval && !isBroken )
+        if (timer >= spawnInterval && !isBroken)
         {
             SpawnCreature();
             timer = 0f; // Reset the timer
         }
+
+        if (isTeleporting && !teleported) teleportTimer += Time.deltaTime;
+
+        if(teleportTimer > teleportTimeLength)
+        {
+            NewTeleport(teleportTarget);
+            isTeleporting = false;
+            teleportTimer = 0;
+        }
     }
+
+    #region Creature Events
 
     private void SpawnCreature()
     {
@@ -181,6 +216,7 @@ public class BehaviourBox : Box, IPlayBoxEvents
         
         blueEnemies.Add(new GameObject()); // Replace with actual spawn logic
     }
+    #endregion
 
     public void BreakBox()
     {
@@ -415,6 +451,9 @@ public class BehaviourBox : Box, IPlayBoxEvents
     {
         if (other.transform.tag != "Player") return;
 
+        IsTriggered = true;
+        PlayerTransform = other.transform;
+
         switch (bbt)
         {
             case BehaviourBoxTypes.movingPlatform:
@@ -436,8 +475,10 @@ public class BehaviourBox : Box, IPlayBoxEvents
                 break;
 
             case BehaviourBoxTypes.teleportBox:
-                ttL = teleportTimeLength;
-                Teleport(teleportTimeLength, teleportTarget);
+                isTeleporting = true;
+                PlayParticleEffect();
+                //ttL = teleportTimeLength;
+                //Teleport(teleportTimeLength, teleportTarget);
                 break;
 
             case BehaviourBoxTypes.bounceBox:
@@ -484,6 +525,10 @@ public class BehaviourBox : Box, IPlayBoxEvents
     {
 
         if (other.transform.tag != "Player") return;
+
+        IsTriggered = false;
+        PlayerTransform = null;
+        teleported = false;
         switch (bbt)
         {
             
@@ -503,7 +548,9 @@ public class BehaviourBox : Box, IPlayBoxEvents
             */
             case BehaviourBoxTypes.teleportBox:
                 isTeleporting = false;
-                teleportTimeLength = ttL;
+                //teleportTimeLength = ttL;
+                //CancelTeleport();
+                StopParticleEffect();
                 break;
             
             case BehaviourBoxTypes.bounceBox:
@@ -528,6 +575,12 @@ public class BehaviourBox : Box, IPlayBoxEvents
         if (m_ParticleSystem == null) return;
         m_ParticleSystem.gameObject.SetActive(true);
         m_ParticleSystem.Play();
+    }
+
+    public void StopParticleEffect()
+    {
+        if (m_ParticleSystem == null) return;
+        m_ParticleSystem.Stop();
     }
 
     public void PlaySoundEffect()
