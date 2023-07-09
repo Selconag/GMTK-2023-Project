@@ -21,8 +21,22 @@ public class BehaviourBox : Box, IPlayBoxEvents
     }
     #endregion
 
+    #region musicBox
+    public AudioSource audioSource;
+
+    public void PlayMusic(AudioClip musicClip)
+    {
+        if (audioSource != null)
+        {        
+            audioSource.Stop();
+            audioSource.clip = musicClip;
+            audioSource.Play();
+        }
+    }
+    #endregion
+
     #region sizeBox
-        public int sizeFactor = 2;
+    public int sizeFactor = 2;
         public void EnlargePlayer(int sizeFactor)
         {
             Player.Instance.transform.localScale *= sizeFactor;
@@ -406,7 +420,9 @@ public class BehaviourBox : Box, IPlayBoxEvents
             case BehaviourBoxTypes.movingPlatform:
                 MovePlatform(MoveTarget.position);
                 break;
-
+            case BehaviourBoxTypes.musicBox:
+                PlayMusic(m_AudioClip);
+                break;
             case BehaviourBoxTypes.sizeBox:
                 EnlargePlayer(sizeFactor);
                 break;
@@ -519,6 +535,10 @@ public class BehaviourBox : Box, IPlayBoxEvents
         if (m_AudioClip == null) return;
         AudioManager.Instance.PlayCustomSoundSound(m_AudioClip);
     }
+
+
+
+
 
     public void PlayAnimationEffect()
     {
