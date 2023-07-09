@@ -22,15 +22,15 @@ public class BehaviourBox : Box, IPlayBoxEvents
     #endregion
 
     #region musicBox
-    public AudioSource audioSource;
+    public AudioSource AudioSource;
 
     public void PlayMusic(AudioClip musicClip)
     {
-        if (audioSource != null)
+        if (AudioSource != null)
         {        
-            audioSource.Stop();
-            audioSource.clip = musicClip;
-            audioSource.Play();
+            AudioSource.Stop();
+            AudioSource.clip = musicClip;
+            AudioSource.Play();
         }
     }
     #endregion
@@ -535,10 +535,6 @@ public class BehaviourBox : Box, IPlayBoxEvents
         if (m_AudioClip == null) return;
         AudioManager.Instance.PlayCustomSoundSound(m_AudioClip);
     }
-
-
-
-
 
     public void PlayAnimationEffect()
     {
